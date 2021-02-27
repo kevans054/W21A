@@ -2,35 +2,20 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1 class="text-info">Welcome to BlogBook!</h1>
+                <h1 class="text-info">Welcome to BlogBook! (Blog.vue)</h1>
             </div>
         </div>
-        <div class="container border border-dark rounded">
-            <div class="row">
-            </div>
-            <div class="row">
-                <div class="col"><br>
-                    <h2 class="text-dark">Create a new blog post here:</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <blog-form></blog-form>
-                    <br>
-                </div>
-            </div>
-        </div>
-        <div class="container border border-dark rounded">
-            <div class="row">
-            </div>
-            <div class="row">
-                <div class="col"><br>
-                    <h2 class="text-dark">View Blog Postings here:</h2>
-                </div>
-            </div>
+        <div>
             <div class="row">
                 <div class="col">
                     <blog-post></blog-post>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="row">
+                <div class="col">
+                    <blog-form></blog-form>
                 </div>
             </div>
         </div>
@@ -40,45 +25,49 @@
 <script>
 import axios from "axios"
 import cookies from 'vue-cookies'
-import BlogForm from '../components/BlogForm.vue'
 import BlogPost from '../components/BlogPost.vue'
+import BlogForm from '../components/BlogForm.vue'
 
     export default {
         name: "blog",
+        components: {
+            BlogPost,
+            BlogForm
+           },
         data() {
             return {
-                blogs: [],
-                userId: cookies.get('userId'),
-                show: false
+                // users:[],
+                loginStatus: "",
+                userid: "",
+                username: cookies.get('username'),
+                password: cookies.get('password'),
             }
         },
-        components: {
-            BlogForm,
-            BlogPost
-           },
 
         mounted: function() {
-            this.getBlogs();
+            this.getUser()
         },
         methods: {
-
-            getBlogs: function() {
+            getUser: function(){
                 axios.request({
-                    url: "/Blog",
                     method: "GET",
-                     headers: {
+                    url: "http://localhost:5000/blog",
+                    headers: {
                         "Content-Type": "application/json",
-
                     },
+                    data: {
+                        username: this.username,
+                        password: this.password,
+                    }
                 }).then((response) => {
-                    console.log(response)
-                    this.blogs = response.data
+                    console.log("The data returned: " + response.data)
+                   this.userid = response.data.userid
                 }).catch((error) => {
                     console.log(error)
+                    this.loginStatus = "Error"
                 })
-            }
-        },
-       
+            },
+        }
     }
 </script>
 

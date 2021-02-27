@@ -2,77 +2,81 @@
     <div class="container border border-dark rounded">
         <div class="row">
             <div class="col">
-                <h3 class=text-white> UserName: </h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <textarea id="blogbox" class="col" v-model="blogContent" placeholder="Blog Content goes here"></textarea>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col"><br>
-                <h6>Blog Object:</h6>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <blog-delete class="col" v-if="isOwned" :blogId="blogObject.blogId"></blog-delete>
-            </div>
-            <div class="col">
-                <blog-edit class="col" @update-blog="updateBlog" v-if="isOwned" :blogId="blogObject.blogId"></blog-edit>
-                <br>
-            </div>
-            <div class="col">
-            </div>
-            <div class="col">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col"><br>
-                <div>
-                    <button class="btn btn-outline-light btn-sm" @click="reloadPage()">Refresh Blogs</button>
+                <div v-for="blog in blogs" :key="blog.blogid">
+                    <textarea id="blogbox" class="col" v-model="blog.blog_content"></textarea>
+                    <blog-delete :blogid="blog.blogid"></blog-delete>
+                    <button class="btn btn-outline-light" type="button" @click="editBlog()">Update</button>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col"><br>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import BlogDelete from './BlogDelete.vue'
-import BlogEdit from './BlogEdit.vue'
+import axios from 'axios'
 import cookies from 'vue-cookies'
-// import axios from 'axios'
+import BlogDelete from './BlogDelete.vue'
+// import BlogEdit from './BlogEdit.vue'
+
     export default {
-        name: 'blog-display',
-        components: {
-            BlogDelete,
-            BlogEdit
-        },
-        props: {
-            BlogObject: {
-                type: Object,
-                required: true,
-                },
+        name: 'blog-post',
+            components: {
+                BlogDelete,
+                // BlogEdit
             },
-        data() {
+            
+        data(){
             return {
-                isOwned: cookies.get('userId') == this.BlogObject.userId,
-                content: this.BlogObject.content,
-                show: false
+                blogs: [],
+                userid: cookies.get("userid"),
+                blogid: cookies.get("blogid")
             }
         },
-        methods: {
-            reloadPage() {
-                window.location.reload()
-            },
-            updateBlog(newContent) {
-                this.content = newContent;
-            },
-            addComment(newComment) {
-                this.comment = newComment;
-            },
+        
+        mounted: function() {
+            this.getBlogs()
         },
+
+        methods: {
+            getBlogs: function() {
+                axios.request({
+                    method: "GET",
+                    url: "http://localhost:5000/blog",
+                   
+                }).then((response) => {
+                    this.blogs = response.data
+                    console.log(response)
+                    cookies.set('blogid', response.data.blogid)
+ 
+                }).catch((error) => {
+                    console.log(error)
+                    this.loginStatus = "Error"
+                })
+            },
+            editBlog: function() {
+                axios.request({
+                    url: "http://localhost:5000/blog",
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    data: {
+                        loginToken: cookies.get("session"),
+                        blogid: this.blogid,
+                        blog_content: this.blog_content
+                    },
+                     
+                }).then((response) => {
+                    console.log(response)
+                }).catch((error) => {
+                    console.log(error)
+                })
+            }
+        }
     }
 </script>
 

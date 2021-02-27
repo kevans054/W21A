@@ -1,10 +1,6 @@
 <template>
     <div>
-        <button class="btn btn-outline-light btn-sm" type="button" @click="show = !show">Edit Blog</button>
-        <div v-if="show">
-            <textarea v-model="blogContent"></textarea>
-            <button class="btn btn-outline-light" type="button" @click="editBlog()">Submit</button>
-        </div>
+        <button class="btn btn-outline-light" type="button" @click="editBlog()">Update</button>
     </div>
 </template>
 
@@ -16,34 +12,34 @@ import cookies from 'vue-cookies'
         data() {
             return {
                 show: false,
-                blogContent: ""
             }
         },
         props: {
-            blogId: {
+            blogid: {
                 type: Number,
                 required: true 
             },
+            blog_content: {
+                type: String,
+                required: true
+            }
         },
         methods: {
             editBlog: function() {
                 axios.request({
-                    url: "http://localhost:8080/Blog",
+                    url: "http://localhost:5000/blog",
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                     }, 
                     data: {
                         loginToken: cookies.get("session"),
-                        blogId: this.blogId,
-                        content: this.blogContent
+                        blogid: this.blogid,
+                        blog_content: this.blog_content
                     },
                      
                 }).then((response) => {
                     console.log(response)
-                    this.$emit('update-blog', this.blogContent)
-                    this.show = false;
-                    window.location.reload()
                 }).catch((error) => {
                     console.log(error)
                 })

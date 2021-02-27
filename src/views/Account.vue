@@ -7,18 +7,13 @@
         </div>
         <div class="container border border-dark rounded">
                 <div class="row">
-                    <div class="col"><br><br>
-                        <input type="text" label="1" id="emailfield" v-model="email" class="starndard-input" placeholder="Email address">
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col"><br>
                         <input type="text" id="usernamefield" v-model="username" class="standard-input" placeholder="Username">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col"><br>
-                        <input type="password" id="passwordfield" v-model="userpassword" placeholder="Password">
+                        <input type="password" id="passwordfield" v-model="password" class="standard-input" placeholder="Password">
                     </div>
                 </div>
                 <div class="row">
@@ -36,11 +31,10 @@
     import axios from 'axios'
     import cookies from 'vue-cookies'
     export default {
-        name: 'accountform',
+        name: 'account',
         data() {
             return {
                 userId: Number,
-                email: "",
                 username: "",
                 password: "",
             }
@@ -49,23 +43,20 @@
             signupUser: function() {
                 axios.request({
                     method: "POST",
-                    url: "http://localhost:5000/login",
+                    url: "http://localhost:5000/account",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     data: {
-                        email: this.email,
                         username: this.username,
-                        password: this.userpassword,
-                        bio: this.bio,
-                        birthdate: this.birthdate
+                        password: this.password,
                     }
                 }).then((response) => {
                     console.log(response)
-                    cookies.set('session', response.data.loginToken)
-                    cookies.set('userId', response.data.userId)
-                    cookies.set('userName', response.data.userName)
-                    cookies.set('password', "userpassword"),
+                    // cookies.set('session', response.data.loginToken)
+                    cookies.set('userid', response.data.userid)
+                    cookies.set('username', response.data.username)
+                    cookies.set('password', "password"),
                     this.$router.push("/Blog")
                 }).catch((error) => {
                     console.log(error)

@@ -2,7 +2,7 @@
     <div class="container border border-dark rounded">
         <div class="row">
             <div class="col">
-                <h4 class="text-white">BlogBook User: {{userId}} </h4>
+                <h4 class="text-white">BlogBook</h4>
             </div>
         </div>
         <div class="row">
@@ -24,7 +24,7 @@ import cookies from 'vue-cookies'
             return {
                 blogContent: "",
                 blogStatus: "Post your blog here!",
-                userId: cookies.get("userId")
+                // userid: cookies.get("userid")
                 }
             },
 
@@ -38,23 +38,19 @@ import cookies from 'vue-cookies'
                     },
                     method: "POST",
                     data: {
-                        loginToken: cookies.get("session"),
-                        content: this.blogContent
+                        content: this.blogContent,
+                        userid: cookies.get('userid')
                     }
                 }).then((response) => {
                     console.log(response)
                     this.blogStatus = "Posted!"
-                    window.location.reload()
                     
                 }).catch((error) => {
                         console.log(error)
                         this.blogStatus = "Failed to post!"
                 })
             }
-        },
-            reloadPage() {
-                window.location.reload()
-            },
+        }
     }
 </script>
 

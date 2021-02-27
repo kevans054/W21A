@@ -7,12 +7,12 @@
 
 <script>
 import axios from "axios"
-import cookies from "vue-cookies"
+// import cookies from "vue-cookies"
     export default {
         name: "blog-delete",
-        
+
         props: {
-            blogId: {
+            blogid: {
                 type: Number,
                 required: true
             }
@@ -20,19 +20,17 @@ import cookies from "vue-cookies"
         methods: {
             deleteBlog: function() {
                 axios.request({
-                    url: "http://localhost:8080/blog",
+                    url: "http://localhost:5000/blog",
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
-                        "X-Api-Key": "p3JJq3WhdMwT98hN9PTaYDE1lr2p0qKOaLfIdjyDxiorc"
                     }, 
                     data: {
-                        loginToken: cookies.get("session"),
-                        blogId: this.blogId
+                        blogid: this.blogid
                     },
                 }).then((response) => {
                     console.log(response)
-                    window.location.reload()
+
                 }).catch((error) => {
                     console.log(error)
                 })
